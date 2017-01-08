@@ -61,13 +61,11 @@ public class MySQLConnection implements IMySQLConnection {
 		info.put("useSSL", Boolean.toString(config.useSSL()));
 		Connection con = DriverManager
 				.getConnection(String.format("jdbc:mysql://%s:%d", config.getHost(), config.getPort()), info);
+		String dbName = config.getDatabase();
 
-		// Check if database exist
-		if (checkDatabaseExist(con)) {
-			return con;
-		}
-
-		// Initialize data
+		// Create database
+		con.createStatement().executeUpdate("CREATE DATABASE IF NOT EXISTS " + dbName);
+		con.setCatalog(dbName);
 
 		return con;
 	}
